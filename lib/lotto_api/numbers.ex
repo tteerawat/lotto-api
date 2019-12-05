@@ -15,6 +15,15 @@ defmodule LottoAPI.Numbers do
                           end)
                         end)
 
+  @unique_three_digits_numbers @three_digits_numbers
+                               |> Enum.map(fn number ->
+                                 number
+                                 |> String.split("", trim: true)
+                                 |> Enum.sort()
+                                 |> Enum.join()
+                               end)
+                               |> Enum.uniq()
+
   def list_two_digits_numbers do
     @two_digits_numbers
   end
@@ -22,4 +31,9 @@ defmodule LottoAPI.Numbers do
   def list_three_digits_numbers do
     @three_digits_numbers
   end
+
+  def list_numbers_from_order_type("up_two"), do: @two_digits_numbers
+  def list_numbers_from_order_type("down_two"), do: @two_digits_numbers
+  def list_numbers_from_order_type("up_three"), do: @three_digits_numbers
+  def list_numbers_from_order_type("shuffle_three"), do: @unique_three_digits_numbers
 end
