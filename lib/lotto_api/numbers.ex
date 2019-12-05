@@ -1,4 +1,13 @@
 defmodule LottoAPI.Numbers do
+  defmodule Helpers do
+    def sort_number(number_str) do
+      number_str
+      |> String.split("", trim: true)
+      |> Enum.sort()
+      |> Enum.join()
+    end
+  end
+
   @one_digit_numbers Enum.map(0..9, &to_string/1)
 
   @two_digits_numbers Enum.flat_map(@one_digit_numbers, fn i ->
@@ -16,12 +25,7 @@ defmodule LottoAPI.Numbers do
                         end)
 
   @unique_three_digits_numbers @three_digits_numbers
-                               |> Enum.map(fn number ->
-                                 number
-                                 |> String.split("", trim: true)
-                                 |> Enum.sort()
-                                 |> Enum.join()
-                               end)
+                               |> Enum.map(&Helpers.sort_number/1)
                                |> Enum.uniq()
 
   def list_two_digits_numbers do
