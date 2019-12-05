@@ -18,12 +18,12 @@ defmodule LottoAPI.DataCase do
 
   using do
     quote do
-      alias LottoAPI.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import LottoAPI.DataCase
+
+      alias LottoAPI.Repo
     end
   end
 

@@ -1,5 +1,13 @@
 defmodule LottoAPI.OrderConfigurations do
+  import Ecto.Query
+
   alias LottoAPI.{OrderConfiguration, Repo}
+
+  def list_order_configurations(params) do
+    OrderConfiguration
+    |> where(^params)
+    |> Repo.all()
+  end
 
   def create_or_update_order_configurations(params_list) do
     fields_maps = Enum.map(params_list, &assign_timestamps/1)

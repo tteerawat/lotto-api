@@ -21,7 +21,9 @@ defmodule LottoAPIWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
+
       alias LottoAPIWeb.Router.Helpers, as: Routes
+      alias LottoAPI.Repo
 
       # The default endpoint for testing
       @endpoint LottoAPIWeb.Endpoint

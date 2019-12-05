@@ -3,6 +3,36 @@ defmodule LottoAPI.OrderConfigurationsTest do
 
   alias LottoAPI.{OrderConfiguration, OrderConfigurations}
 
+  describe "list_order_configurations/1" do
+    test "returns a list of order configurations from the given params" do
+      order_config =
+        Repo.insert!(%OrderConfiguration{
+          order_type: "up_three",
+          order_num: "123",
+          limit: 10,
+          period: ~D[2019-11-01]
+        })
+
+      result =
+        OrderConfigurations.list_order_configurations(
+          order_type: "up_three",
+          period: "2019-11-01"
+        )
+
+      assert [^order_config] = result
+    end
+
+    test "returns an empty list if there is no order configurations" do
+      result =
+        OrderConfigurations.list_order_configurations(
+          order_type: "up_three",
+          period: "2019-11-01"
+        )
+
+      assert result == []
+    end
+  end
+
   describe "create_or_update_order_configurations/1" do
     test "creates order configurations from the given params list" do
       params_list = [
