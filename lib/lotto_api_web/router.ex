@@ -5,7 +5,9 @@ defmodule LottoAPIWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", LottoAPIWeb do
+  scope "/", LottoAPIWeb do
     pipe_through :api
+
+    post "/admin/order-configs", OrderConfigurationController, :create
   end
 end

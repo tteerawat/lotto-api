@@ -22,7 +22,8 @@ defmodule LottoAPIWeb do
       use Phoenix.Controller, namespace: LottoAPIWeb
 
       import Plug.Conn
-      import LottoAPIWeb.Gettext
+      import LottoAPIWeb.{Gettext, ParamsValidatorPlug}
+
       alias LottoAPIWeb.Router.Helpers, as: Routes
     end
   end
