@@ -3,7 +3,26 @@ defmodule LottoAPIWeb.OrderConfigurationController do
 
   alias LottoAPI.{Numbers, OrderConfigurations}
 
+  plug :validate_params, with: LottoAPIWeb.ListOrderConfigurationsParams, action: :index
   plug :validate_params, with: LottoAPIWeb.CreateOrderConfigurationsParams, action: :create
+
+  def index(%{assigns: %{validated_params: validated_params}} = conn, _) do
+    %{period: period, order_type: order_type} = validated_params
+
+    order_configurations =
+      OrderConfigurations.list_order_configurations(period: period, order_type: order_type)
+
+    numbers = Numbers.list_numbers_from_order_type(order_type)
+
+    conn
+    |> put_status(:ok)
+    |> put_view(LottoAPIWeb.OrderConfigurationView)
+    |> render("list.json",
+      period: period,
+      order_configurations: order_configurations,
+      numbers: numbers
+    )
+  end
 
   def create(%{assigns: %{validated_params: %{period: period} = validated_params}} = conn, _) do
     order_configurations =

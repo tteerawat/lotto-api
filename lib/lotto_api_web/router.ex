@@ -9,5 +9,6 @@ defmodule LottoAPIWeb.Router do
     pipe_through :api
 
     post "/admin/order-configs", OrderConfigurationController, :create
+    get "/order-configs", OrderConfigurationController, :index
   end
 end
