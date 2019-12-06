@@ -1,25 +1,15 @@
 defmodule LottoAPI.OrderConfigurations do
-  import Ecto.Query
-
   alias LottoAPI.{OrderConfiguration, Repo}
 
-  def list_order_configurations(params) do
-    OrderConfiguration
-    |> where(^params)
-    |> Repo.all()
-  end
-
-  def create_or_update_order_configurations(params_list) do
+  def create_or_update_order_configurations!(params_list) do
     fields_maps = Enum.map(params_list, &assign_timestamps/1)
 
-    {_, configs} =
-      Repo.insert_all(OrderConfiguration, fields_maps,
-        returning: true,
-        on_conflict: {:replace, [:limit, :updated_at]},
-        conflict_target: [:period, :order_type, :order_num]
-      )
+    Repo.insert_all(OrderConfiguration, fields_maps,
+      on_conflict: {:replace, [:limit, :updated_at]},
+      conflict_target: [:batch_order_configuration_id, :order_num]
+    )
 
-    configs
+    :ok
   end
 
   defp assign_timestamps(params) do

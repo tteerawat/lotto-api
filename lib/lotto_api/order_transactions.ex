@@ -1,6 +1,16 @@
 defmodule LottoAPI.OrderTransactions do
   alias LottoAPI.{OrderEntries, OrderTransaction, Repo}
 
+  def fetch_order_transaction_by(params) do
+    case Repo.get_by(OrderTransaction, params) do
+      nil ->
+        {:error, :not_found}
+
+      order_transaction ->
+        {:ok, order_transaction}
+    end
+  end
+
   def create_order_transaction_and_entries!(period, order_type, orders) do
     {:ok, order_transaction} =
       Repo.transaction(fn ->

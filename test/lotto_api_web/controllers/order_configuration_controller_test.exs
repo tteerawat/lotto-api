@@ -1,7 +1,7 @@
 defmodule LottoAPIWeb.OrderConfigurationControllerTest do
   use LottoAPIWeb.ConnCase
 
-  alias LottoAPI.OrderConfiguration
+  alias LottoAPI.{BatchOrderConfiguration, OrderConfiguration}
 
   describe "index/2" do
     test "renders 400 error response if the given params is invalid", %{conn: conn} do
@@ -15,12 +15,33 @@ defmodule LottoAPIWeb.OrderConfigurationControllerTest do
              }
     end
 
+    test "renders 404 error response if the batch order config cannot be found", %{conn: conn} do
+      conn =
+        get(conn, Routes.order_configuration_path(conn, :index), %{
+          "order_type" => "up_two",
+          "period" => "2019-11-01"
+        })
+
+      assert json_response(conn, 404) == %{"errors" => %{"detail" => "Not Found"}}
+    end
+
     test "renders 200 ok response if the given params is valid", %{conn: conn} do
+      batch_order_configuration =
+        Repo.insert!(%BatchOrderConfiguration{
+          order_type: "up_two",
+          period: ~D[2019-11-01]
+        })
+
       Repo.insert!(%OrderConfiguration{
-        order_type: "up_two",
-        order_num: "03",
+        order_num: "00",
         limit: 10,
-        period: ~D[2019-11-01]
+        batch_order_configuration_id: batch_order_configuration.id
+      })
+
+      Repo.insert!(%OrderConfiguration{
+        order_num: "01",
+        limit: 20,
+        batch_order_configuration_id: batch_order_configuration.id
       })
 
       conn =
@@ -31,106 +52,8 @@ defmodule LottoAPIWeb.OrderConfigurationControllerTest do
 
       assert json_response(conn, 200) == %{
                "configs" => [
-                 %{"limit" => 0, "order_num" => "00"},
-                 %{"limit" => 0, "order_num" => "01"},
-                 %{"limit" => 0, "order_num" => "02"},
-                 %{"limit" => 10, "order_num" => "03"},
-                 %{"limit" => 0, "order_num" => "04"},
-                 %{"limit" => 0, "order_num" => "05"},
-                 %{"limit" => 0, "order_num" => "06"},
-                 %{"limit" => 0, "order_num" => "07"},
-                 %{"limit" => 0, "order_num" => "08"},
-                 %{"limit" => 0, "order_num" => "09"},
-                 %{"limit" => 0, "order_num" => "10"},
-                 %{"limit" => 0, "order_num" => "11"},
-                 %{"limit" => 0, "order_num" => "12"},
-                 %{"limit" => 0, "order_num" => "13"},
-                 %{"limit" => 0, "order_num" => "14"},
-                 %{"limit" => 0, "order_num" => "15"},
-                 %{"limit" => 0, "order_num" => "16"},
-                 %{"limit" => 0, "order_num" => "17"},
-                 %{"limit" => 0, "order_num" => "18"},
-                 %{"limit" => 0, "order_num" => "19"},
-                 %{"limit" => 0, "order_num" => "20"},
-                 %{"limit" => 0, "order_num" => "21"},
-                 %{"limit" => 0, "order_num" => "22"},
-                 %{"limit" => 0, "order_num" => "23"},
-                 %{"limit" => 0, "order_num" => "24"},
-                 %{"limit" => 0, "order_num" => "25"},
-                 %{"limit" => 0, "order_num" => "26"},
-                 %{"limit" => 0, "order_num" => "27"},
-                 %{"limit" => 0, "order_num" => "28"},
-                 %{"limit" => 0, "order_num" => "29"},
-                 %{"limit" => 0, "order_num" => "30"},
-                 %{"limit" => 0, "order_num" => "31"},
-                 %{"limit" => 0, "order_num" => "32"},
-                 %{"limit" => 0, "order_num" => "33"},
-                 %{"limit" => 0, "order_num" => "34"},
-                 %{"limit" => 0, "order_num" => "35"},
-                 %{"limit" => 0, "order_num" => "36"},
-                 %{"limit" => 0, "order_num" => "37"},
-                 %{"limit" => 0, "order_num" => "38"},
-                 %{"limit" => 0, "order_num" => "39"},
-                 %{"limit" => 0, "order_num" => "40"},
-                 %{"limit" => 0, "order_num" => "41"},
-                 %{"limit" => 0, "order_num" => "42"},
-                 %{"limit" => 0, "order_num" => "43"},
-                 %{"limit" => 0, "order_num" => "44"},
-                 %{"limit" => 0, "order_num" => "45"},
-                 %{"limit" => 0, "order_num" => "46"},
-                 %{"limit" => 0, "order_num" => "47"},
-                 %{"limit" => 0, "order_num" => "48"},
-                 %{"limit" => 0, "order_num" => "49"},
-                 %{"limit" => 0, "order_num" => "50"},
-                 %{"limit" => 0, "order_num" => "51"},
-                 %{"limit" => 0, "order_num" => "52"},
-                 %{"limit" => 0, "order_num" => "53"},
-                 %{"limit" => 0, "order_num" => "54"},
-                 %{"limit" => 0, "order_num" => "55"},
-                 %{"limit" => 0, "order_num" => "56"},
-                 %{"limit" => 0, "order_num" => "57"},
-                 %{"limit" => 0, "order_num" => "58"},
-                 %{"limit" => 0, "order_num" => "59"},
-                 %{"limit" => 0, "order_num" => "60"},
-                 %{"limit" => 0, "order_num" => "61"},
-                 %{"limit" => 0, "order_num" => "62"},
-                 %{"limit" => 0, "order_num" => "63"},
-                 %{"limit" => 0, "order_num" => "64"},
-                 %{"limit" => 0, "order_num" => "65"},
-                 %{"limit" => 0, "order_num" => "66"},
-                 %{"limit" => 0, "order_num" => "67"},
-                 %{"limit" => 0, "order_num" => "68"},
-                 %{"limit" => 0, "order_num" => "69"},
-                 %{"limit" => 0, "order_num" => "70"},
-                 %{"limit" => 0, "order_num" => "71"},
-                 %{"limit" => 0, "order_num" => "72"},
-                 %{"limit" => 0, "order_num" => "73"},
-                 %{"limit" => 0, "order_num" => "74"},
-                 %{"limit" => 0, "order_num" => "75"},
-                 %{"limit" => 0, "order_num" => "76"},
-                 %{"limit" => 0, "order_num" => "77"},
-                 %{"limit" => 0, "order_num" => "78"},
-                 %{"limit" => 0, "order_num" => "79"},
-                 %{"limit" => 0, "order_num" => "80"},
-                 %{"limit" => 0, "order_num" => "81"},
-                 %{"limit" => 0, "order_num" => "82"},
-                 %{"limit" => 0, "order_num" => "83"},
-                 %{"limit" => 0, "order_num" => "84"},
-                 %{"limit" => 0, "order_num" => "85"},
-                 %{"limit" => 0, "order_num" => "86"},
-                 %{"limit" => 0, "order_num" => "87"},
-                 %{"limit" => 0, "order_num" => "88"},
-                 %{"limit" => 0, "order_num" => "89"},
-                 %{"limit" => 0, "order_num" => "90"},
-                 %{"limit" => 0, "order_num" => "91"},
-                 %{"limit" => 0, "order_num" => "92"},
-                 %{"limit" => 0, "order_num" => "93"},
-                 %{"limit" => 0, "order_num" => "94"},
-                 %{"limit" => 0, "order_num" => "95"},
-                 %{"limit" => 0, "order_num" => "96"},
-                 %{"limit" => 0, "order_num" => "97"},
-                 %{"limit" => 0, "order_num" => "98"},
-                 %{"limit" => 0, "order_num" => "99"}
+                 %{"limit" => 10, "order_num" => "00"},
+                 %{"limit" => 20, "order_num" => "01"}
                ],
                "period" => "2019-11-01"
              }
@@ -158,6 +81,7 @@ defmodule LottoAPIWeb.OrderConfigurationControllerTest do
           "period" => "2019-11-01"
         })
 
+      assert Repo.one(BatchOrderConfiguration)
       assert Repo.aggregate(OrderConfiguration, :count, :id) == 220
 
       assert json_response(conn, 201) == %{
