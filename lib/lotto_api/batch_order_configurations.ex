@@ -1,5 +1,13 @@
 defmodule LottoAPI.BatchOrderConfigurations do
-  alias LottoAPI.{BatchOrderConfiguration, Numbers, OrderConfigurations, Repo}
+  import Ecto.Query
+
+  alias LottoAPI.{
+    BatchOrderConfiguration,
+    Numbers,
+    OrderConfiguration,
+    OrderConfigurations,
+    Repo
+  }
 
   def fetch_batch_order_configuration_by(params) do
     case Repo.get_by(BatchOrderConfiguration, params) do
@@ -59,6 +67,7 @@ defmodule LottoAPI.BatchOrderConfigurations do
   end
 
   defp preload_order_configurations(batch_order_configuration) do
-    Repo.preload(batch_order_configuration, :order_configurations)
+    query = from order_config in OrderConfiguration, order_by: order_config.order_num
+    Repo.preload(batch_order_configuration, order_configurations: query)
   end
 end
