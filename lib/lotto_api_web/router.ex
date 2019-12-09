@@ -10,7 +10,8 @@ defmodule LottoAPIWeb.Router do
 
     post "/admin/order-configs", OrderConfigurationController, :create
     get "/order-configs", OrderConfigurationController, :index
-
     resources "/orders", OrderTransactionController, only: [:index, :create]
+
+    post "/tokens", TokenController, :create
   end
 end

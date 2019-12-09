@@ -73,7 +73,7 @@ defmodule LottoAPIWeb.OrderConfigurationControllerTest do
              }
     end
 
-    test "renders 201 ok response if the given params is valid", %{conn: conn} do
+    test "renders 201 created response if the given params is valid", %{conn: conn} do
       conn =
         post(conn, Routes.order_configuration_path(conn, :create), %{
           "order_type" => "shuffle_three",

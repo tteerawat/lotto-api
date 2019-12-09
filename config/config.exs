@@ -26,6 +26,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :lotto_api, LottoAPI.Guardian,
+  issuer: "lotto_api",
+  secret_key: "2AUmYUxHsb+E6m+853Ynoa+bEt69R1UIdutOAcmAo/o4bCaRL85giC1M7azGeDyL"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
