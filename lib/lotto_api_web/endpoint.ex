@@ -40,5 +40,7 @@ defmodule LottoAPIWeb.Endpoint do
     key: "_lotto_api_key",
     signing_salt: "RIzu9b0w"
 
+  plug CORSPlug, origin: ["*"]
+
   plug LottoAPIWeb.Router
 end
