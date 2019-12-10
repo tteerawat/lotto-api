@@ -12,14 +12,7 @@ defmodule LottoAPIWeb.OrderTransactionController do
 
   def index(conn, _) do
     %{period: period, order_type: order_type} = conn.assigns.validated_params
-
-    order_entries =
-      case OrderTransactions.fetch_order_transaction_by(period: period, order_type: order_type) do
-        {:ok, order_transaction} -> order_transaction.order_entries
-        {:error, :not_found} -> []
-      end
-
-    orders = Orders.accumulate_order_entries(order_type, period, order_entries)
+    orders = Orders.accumulate_order_entries(order_type, period)
 
     conn
     |> put_status(:ok)

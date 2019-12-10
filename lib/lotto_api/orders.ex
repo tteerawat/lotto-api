@@ -9,9 +9,9 @@ defmodule LottoAPI.Order do
 end
 
 defmodule LottoAPI.Orders do
-  alias LottoAPI.{BatchOrderConfigurations, Numbers}
+  alias LottoAPI.{BatchOrderConfigurations, Numbers, OrderTransactions}
 
-  def accumulate_order_entries(order_type, period, order_entries) do
+  def accumulate_order_entries(order_type, period) do
     configs =
       case BatchOrderConfigurations.fetch_batch_order_configuration_by(
              order_type: order_type,
@@ -19,6 +19,18 @@ defmodule LottoAPI.Orders do
            ) do
         {:ok, batch_order_config} ->
           batch_order_config.order_configurations
+
+        {:error, :not_found} ->
+          []
+      end
+
+    order_entries =
+      case OrderTransactions.fetch_order_transaction_by(
+             period: period,
+             order_type: order_type
+           ) do
+        {:ok, order_transaction} ->
+          order_transaction.order_entries
 
         {:error, :not_found} ->
           []
