@@ -8,8 +8,8 @@ defmodule LottoAPI.Order do
   ]
 end
 
-defmodule LottoAPI.OrderTransactionWithOrderEntries do
-  alias LottoAPI.{BatchOrderConfigurations, Numbers, Repo}
+defmodule LottoAPI.Orders do
+  alias LottoAPI.{BatchOrderConfigurations, Numbers}
 
   def accumulate_order_entries(order_type, period, order_entries) do
     configs =

@@ -4,7 +4,7 @@ defmodule LottoAPIWeb.OrderTransactionController do
   alias LottoAPI.{
     BatchOrderConfigurations,
     OrderTransactions,
-    OrderTransactionWithOrderEntries
+    Orders
   }
 
   plug :validate_params, with: LottoAPIWeb.ListOrderTransactionsParams, action: :index
@@ -19,8 +19,7 @@ defmodule LottoAPIWeb.OrderTransactionController do
         {:error, :not_found} -> []
       end
 
-    orders =
-      OrderTransactionWithOrderEntries.accumulate_order_entries(order_type, period, order_entries)
+    orders = Orders.accumulate_order_entries(order_type, period, order_entries)
 
     conn
     |> put_status(:ok)
