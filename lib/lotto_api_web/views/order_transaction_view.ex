@@ -1,10 +1,10 @@
 defmodule LottoAPIWeb.OrderTransactionView do
   use LottoAPIWeb, :view
 
-  def render("list.json", %{order_transaction: order_transaction, orders: orders}) do
+  def render("list.json", %{order_type: order_type, period: period, orders: orders}) do
     %{
-      period: order_transaction.period,
-      order_type: order_transaction.order_type,
+      period: period,
+      order_type: order_type,
       orders:
         Enum.map(orders, fn order ->
           %{

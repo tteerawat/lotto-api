@@ -9,60 +9,63 @@ defmodule LottoAPI.Order do
 end
 
 defmodule LottoAPI.OrderTransactionWithOrderEntries do
-  alias LottoAPI.{BatchOrderConfigurations, Repo}
+  alias LottoAPI.{BatchOrderConfigurations, Numbers, Repo}
 
-  def accumulate_order_entries(order_transaction) do
-    {:ok, batch_order_config} =
-      BatchOrderConfigurations.fetch_batch_order_configuration_by(
-        order_type: order_transaction.order_type,
-        period: order_transaction.period
-      )
+  def accumulate_order_entries(order_type, period, order_entries) do
+    configs =
+      case BatchOrderConfigurations.fetch_batch_order_configuration_by(
+             order_type: order_type,
+             period: period
+           ) do
+        {:ok, batch_order_config} ->
+          batch_order_config.order_configurations
 
-    limits_map =
-      Enum.into(batch_order_config.order_configurations, %{}, &{&1.order_num, &1.limit})
+        {:error, :not_found} ->
+          []
+      end
 
-    orders =
-      order_transaction
-      |> Repo.preload(:order_entries)
-      |> Map.get(:order_entries)
+    limits_by_number = Enum.into(configs, %{}, &{&1.order_num, &1.limit})
+
+    amounts_by_number =
+      order_entries
       |> Enum.group_by(& &1.order_num, & &1.amount)
-      |> Enum.map(fn {order_num, amounts} ->
-        configured_limit = Map.fetch!(limits_map, order_num)
-        total_amount = Enum.sum(amounts)
+      |> Enum.map(fn {order_num, amounts} -> {order_num, Enum.sum(amounts)} end)
+      |> Map.new()
 
-        cond do
-          total_amount > configured_limit ->
-            %LottoAPI.Order{
-              order_num: order_num,
-              limit: configured_limit,
-              amount: configured_limit,
-              remaining_amount: 0,
-              excess_amount: total_amount - configured_limit
-            }
+    order_type
+    |> Numbers.list_numbers_from_order_type()
+    |> Enum.map(fn number ->
+      configured_limit = Map.get(limits_by_number, number, 0)
+      total_amount = Map.get(amounts_by_number, number, 0)
 
-          total_amount < configured_limit ->
-            %LottoAPI.Order{
-              order_num: order_num,
-              limit: configured_limit,
-              amount: total_amount,
-              remaining_amount: configured_limit - total_amount,
-              excess_amount: 0
-            }
+      cond do
+        total_amount > configured_limit ->
+          %LottoAPI.Order{
+            order_num: number,
+            limit: configured_limit,
+            amount: configured_limit,
+            remaining_amount: 0,
+            excess_amount: total_amount - configured_limit
+          }
 
-          total_amount == configured_limit ->
-            %LottoAPI.Order{
-              order_num: order_num,
-              limit: configured_limit,
-              amount: total_amount,
-              remaining_amount: 0,
-              excess_amount: 0
-            }
-        end
-      end)
+        total_amount < configured_limit ->
+          %LottoAPI.Order{
+            order_num: number,
+            limit: configured_limit,
+            amount: total_amount,
+            remaining_amount: configured_limit - total_amount,
+            excess_amount: 0
+          }
 
-    %{
-      order_transaction: order_transaction,
-      orders: orders
-    }
+        total_amount == configured_limit ->
+          %LottoAPI.Order{
+            order_num: number,
+            limit: configured_limit,
+            amount: total_amount,
+            remaining_amount: 0,
+            excess_amount: 0
+          }
+      end
+    end)
   end
 end

@@ -13,22 +13,19 @@ defmodule LottoAPIWeb.OrderTransactionController do
   def index(conn, _) do
     %{period: period, order_type: order_type} = conn.assigns.validated_params
 
-    case OrderTransactions.fetch_order_transaction_by(period: period, order_type: order_type) do
-      {:ok, order_transaction} ->
-        %{order_transaction: order_transaction, orders: orders} =
-          OrderTransactionWithOrderEntries.accumulate_order_entries(order_transaction)
+    order_entries =
+      case OrderTransactions.fetch_order_transaction_by(period: period, order_type: order_type) do
+        {:ok, order_transaction} -> order_transaction.order_entries
+        {:error, :not_found} -> []
+      end
 
-        conn
-        |> put_status(:ok)
-        |> put_view(LottoAPIWeb.OrderTransactionView)
-        |> render("list.json", order_transaction: order_transaction, orders: orders)
+    orders =
+      OrderTransactionWithOrderEntries.accumulate_order_entries(order_type, period, order_entries)
 
-      {:error, :not_found} ->
-        conn
-        |> put_status(:not_found)
-        |> put_view(LottoAPIWeb.ErrorView)
-        |> render("404.json")
-    end
+    conn
+    |> put_status(:ok)
+    |> put_view(LottoAPIWeb.OrderTransactionView)
+    |> render("list.json", period: period, order_type: order_type, orders: orders)
   end
 
   def create(conn, _) do

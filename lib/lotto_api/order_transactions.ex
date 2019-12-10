@@ -7,7 +7,7 @@ defmodule LottoAPI.OrderTransactions do
         {:error, :not_found}
 
       order_transaction ->
-        {:ok, order_transaction}
+        {:ok, Repo.preload(order_transaction, :order_entries)}
     end
   end
 
