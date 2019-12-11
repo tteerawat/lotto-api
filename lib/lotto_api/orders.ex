@@ -12,30 +12,8 @@ defmodule LottoAPI.Orders do
   alias LottoAPI.{BatchOrderConfigurations, Numbers, OrderTransactions}
 
   def accumulate_order_entries(order_type, period) do
-    configs =
-      case BatchOrderConfigurations.fetch_batch_order_configuration_by(
-             order_type: order_type,
-             period: period
-           ) do
-        {:ok, batch_order_config} ->
-          batch_order_config.order_configurations
-
-        {:error, :not_found} ->
-          []
-      end
-
-    order_entries =
-      case OrderTransactions.fetch_order_transaction_by(
-             period: period,
-             order_type: order_type
-           ) do
-        {:ok, order_transaction} ->
-          order_transaction.order_entries
-
-        {:error, :not_found} ->
-          []
-      end
-
+    configs = list_order_configs(order_type, period)
+    order_entries = list_order_entries(order_type, period)
     limits_by_number = Enum.into(configs, %{}, &{&1.order_num, &1.limit})
 
     amounts_by_number =
@@ -79,5 +57,31 @@ defmodule LottoAPI.Orders do
           }
       end
     end)
+  end
+
+  defp list_order_configs(order_type, period) do
+    case BatchOrderConfigurations.fetch_batch_order_configuration_by(
+           order_type: order_type,
+           period: period
+         ) do
+      {:ok, batch_order_config} ->
+        batch_order_config.order_configurations
+
+      {:error, :not_found} ->
+        []
+    end
+  end
+
+  defp list_order_entries(order_type, period) do
+    case OrderTransactions.fetch_order_transaction_by(
+           order_type: order_type,
+           period: period
+         ) do
+      {:ok, order_transaction} ->
+        order_transaction.order_entries
+
+      {:error, :not_found} ->
+        []
+    end
   end
 end
