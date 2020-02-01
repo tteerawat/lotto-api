@@ -9,34 +9,14 @@ defmodule LottoAPI.RecordDestroyer do
       |> NaiveDateTime.add(-time_amount_in_millisecond, :millisecond)
 
     Repo.transaction(fn ->
-      BatchOrderConfiguration
-      |> where([b], b.inserted_at < ^datetime)
-      |> Repo.delete_all()
-
-      OrderTransaction
-      |> where([b], b.inserted_at < ^datetime)
-      |> Repo.delete_all()
+      delete_all_expired_records(BatchOrderConfiguration, datetime)
+      delete_all_expired_records(OrderTransaction, datetime)
     end)
   end
-end
 
-# defmodule LottoAPI.RecordDestroyer do
-#   use GenServer
-#
-#   @interval :timer.hours(24)
-#
-#   def start_link() do
-#     GenServer.start_link(__MODULE__, [], name: __MODULE__)
-#   end
-#
-#   def init(_) do
-#     {:ok, []}
-#   end
-#
-#   def handle_info(:trigger, state) do
-#   end
-#
-#   defp schedule(interval) do
-#     Process.send_after(self(), :trigger, interval)
-#   end
-# end
+  defp delete_all_expired_records(query, datetime) do
+    query
+    |> where([r], r.inserted_at < ^datetime)
+    |> Repo.delete_all()
+  end
+end

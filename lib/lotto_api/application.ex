@@ -5,15 +5,19 @@ defmodule LottoAPI.Application do
 
   use Application
 
+  @thirty_days :timer.hours(24 * 30)
+
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
       LottoAPI.Repo,
       # Start the endpoint when the application starts
-      LottoAPIWeb.Endpoint
+      LottoAPIWeb.Endpoint,
       # Starts a worker by calling: LottoAPI.Worker.start_link(arg)
       # {LottoAPI.Worker, arg},
+
+      {LottoAPI.RecordDestroyerWorker, @thirty_days}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
