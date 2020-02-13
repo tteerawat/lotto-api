@@ -17,7 +17,7 @@ defmodule LottoAPI.Application do
       # Starts a worker by calling: LottoAPI.Worker.start_link(arg)
       # {LottoAPI.Worker, arg},
 
-      {LottoAPI.RecordDestroyerWorker, @thirty_days}
+      # {LottoAPI.RecordDestroyerWorker, @thirty_days}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
