@@ -16,7 +16,8 @@ config :lotto_api, LottoAPIWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "7DiR14BsTWx8R1xRT/S2cC74q3UOClG5h4gzn4TZTQ8nO5RBdIu0foC4Hvo2Xt2N",
   render_errors: [view: LottoAPIWeb.ErrorView, accepts: ~w(json)],
-  pubsub_server: LottoAPI.PubSub
+  pubsub_server: LottoAPI.PubSub,
+  live_view: [signing_salt: "pdbXvEaXgLf6rBru2f9YgNamKA+mk4aQ"]
 
 # Configures Elixir's Logger
 config :logger, :console,

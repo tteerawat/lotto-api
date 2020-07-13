@@ -8,12 +8,18 @@ defmodule LottoAPI.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the PubSub system
-      {Phoenix.PubSub, name: LottoAPI.PubSub},
       # Start the Ecto repository
       LottoAPI.Repo,
+
+      # Start the Telemetry supervisor
+      LottoAPIWeb.Telemetry,
+
+      # Start the PubSub system
+      {Phoenix.PubSub, name: LottoAPI.PubSub},
+
       # Start the endpoint when the application starts
       LottoAPIWeb.Endpoint
+
       # Starts a worker by calling: LottoAPI.Worker.start_link(arg)
       # {LottoAPI.Worker, arg},
     ]
